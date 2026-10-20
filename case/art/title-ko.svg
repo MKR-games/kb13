@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 760 530" fill="none" role="img" aria-labelledby="title desc">
+  <title id="title">검은 복도</title>
+  <desc id="desc">칼날처럼 각진 한글 레터링. 검은은 은빛 금속, 복도는 어두운 붉은색.</desc>
+  <defs>
+    <linearGradient id="silver" x1="0" y1="-18" x2="0" y2="209" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#f2ede1"/><stop offset=".17" stop-color="#b8b7b0"/>
+      <stop offset=".36" stop-color="#6c7273"/><stop offset=".45" stop-color="#34383d"/>
+      <stop offset=".49" stop-color="#e4e1d7"/><stop offset=".56" stop-color="#c9c9c0"/>
+      <stop offset=".74" stop-color="#858c8c"/><stop offset=".89" stop-color="#454b50"/>
+      <stop offset="1" stop-color="#a5a6a0"/>
+    </linearGradient>
+    <linearGradient id="blood" x1="0" y1="-16" x2="35" y2="232" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#bf5c51"/><stop offset=".55" stop-color="#a7463f"/>
+      <stop offset="1" stop-color="#782b2c"/>
+    </linearGradient>
+    <linearGradient id="edge" x1="0" y1="0" x2=".6" y2="1">
+      <stop stop-color="#eee6d7"/><stop offset=".4" stop-color="#b6b7af"/>
+      <stop offset=".6" stop-color="#333a3e"/><stop offset="1" stop-color="#a2a19b"/>
+    </linearGradient>
+    <!-- Original outlined lettering; no font download is needed. -->
+    <g id="geomeun" fill-rule="evenodd">
+      <!-- 검 : ㄱ + ㅓ + ㅁ -->
+      <path d="M3 10 31-3 112-3 109 85 80 98 82 24 16 27Z
+        M146-8 177-22 172 105 143 113 145 62 119 66 120 39 146 37Z
+        M7 123 36 109 171 106 166 200 7 207Z
+        M38 138 38 178 137 173 140 133Z"/>
+      <!-- 은 : ㅇ + ㅡ + ㄴ -->
+      <path transform="translate(217)" d="M61 0 139-3 171 19 173 65 142 91 60 94 25 72 23 26Z
+        M72 25 54 38 55 57 73 69 127 67 143 54 142 35 125 23Z
+        M10 110 188 105 178 133 0 138Z
+        M29 151 61 140 59 178 188 173 178 203 27 209Z"/>
+    </g>
+    <g id="bokdo" fill-rule="evenodd">
+      <!-- 복 : ㅂ + ㅗ + ㄱ -->
+      <path d="M18-2 51-15 50 23 137 20 138-3 171-17 167 88 17 95Z
+        M49 46 48 69 137 65 137 43Z
+        M84 108 116 97 115 123 190 119 180 146 1 152 10 126 84 124Z
+        M18 168 190 161 185 225 154 236 157 190 7 197Z"/>
+      <!-- 도 : ㄷ + ㅗ -->
+      <path transform="translate(220)" d="M25-1 182-7 171 25 58 29 55 94 185 88 173 121 22 129Z
+        M87 153 121 140 119 197 193 190 181 224 5 234 16 201 87 199Z"/>
+    </g>
+    <g id="spark">
+      <path d="M0-43 12-11 43 0 12 11 0 43-12 11-43 0-12-11Z"/>
+      <path d="M0-32 7-7 32 0 7 7 0 32-7 7-32 0-7-7Z" fill="#18191a" stroke="#e4ded0" stroke-width="1.7"/>
+    </g>
+  </defs>
+  <g transform="translate(153 51) rotate(-5 200 100) scale(1.13 .91)">
+    <use xlink:href="#geomeun" transform="translate(5 7)" fill="#030405" stroke="#030405" stroke-width="3"/>
+    <use xlink:href="#geomeun" transform="translate(2 3)" fill="#555a5b" stroke="#96978e" stroke-width="1.3"/>
+    <use xlink:href="#geomeun" fill="url(#silver)" stroke="url(#edge)" stroke-width="1.4" stroke-linejoin="miter"/>
+    <path d="m31-1 78 0m40-6 25-12M37 111l131-3m-107 11 101-4M278 2l77-3m-127 113 173-5" stroke="#faf2e2" stroke-width="1.2" opacity=".63"/>
+  </g>
+  <g transform="translate(102 270) rotate(-3 207 100) scale(1.29 .92)">
+    <use xlink:href="#bokdo" transform="translate(5 6)" fill="#080507" stroke="#080507" stroke-width="3"/>
+    <use xlink:href="#bokdo" transform="translate(2.1 2.5)" fill="#4c1c21" stroke="#60292a" stroke-width="1.4"/>
+    <use xlink:href="#bokdo" fill="url(#blood)" stroke="#d0826c" stroke-opacity=".43" stroke-width=".9"/>
+    <path d="m19-1 30-12m90 12 30-14M19 170l169-7m58-162 153-7M308 155l31-12" stroke="#de9478" stroke-opacity=".45" stroke-width="1"/>
+  </g>
+  <g transform="translate(670 245) rotate(13)">
+    <use xlink:href="#spark" transform="translate(3 4)" fill="#050607"/>
+    <use xlink:href="#spark" fill="url(#edge)" stroke="#bab7aa" stroke-width="1.3"/>
+  </g>
+</svg>
