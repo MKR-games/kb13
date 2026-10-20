@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 360" role="img" aria-label="낡은 흑백 필름에 남은 어두운 복도">
+<defs>
+<linearGradient id="wall" x2="100%" y2="0"><stop stop-color="#333332"/><stop offset=".5" stop-color="#0a0b0c"/><stop offset="1" stop-color="#28292a"/></linearGradient>
+<linearGradient id="floor" x2="0" y2="100%"><stop stop-color="#4f5050"/><stop offset=".45" stop-color="#1e2021"/><stop offset="1" stop-color="#08090a"/></linearGradient>
+<linearGradient id="light" x2="0" y2="100%"><stop stop-color="#c7c6b6" stop-opacity=".4"/><stop offset="1" stop-color="#9a9f9d" stop-opacity="0"/></linearGradient>
+<radialGradient id="v"><stop offset=".25" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".8"/></radialGradient>
+<filter id="grain"><feTurbulence type="fractalNoise" baseFrequency=".8" numOctaves="3" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/><feComponentTransfer><feFuncA type="linear" slope=".18"/></feComponentTransfer><feBlend in="SourceGraphic" mode="soft-light"/></filter>
+<pattern id="scan" width="4" height="4" patternUnits="userSpaceOnUse"><path d="M0 3.5h4" stroke="#000" opacity=".18"/></pattern>
+</defs>
+<g filter="url(#grain)"><path fill="url(#wall)" d="M0 0h480v360H0z"/><path d="M0 360 195 210h90l195 150Z" fill="url(#floor)"/><path d="M0 0h480L285 87h-90Z" fill="#151719"/>
+<path d="M195 87h90v123h-90Z" fill="#222526"/><path d="M213 211V104h53v107" fill="#08090a" stroke="#5b5d5a" stroke-width="2"/><path d="M258 104h8v107h-8Z" fill="#9d9b87"/><path d="m258 212 8-1 82 149h-96Z" fill="url(#light)"/>
+<g fill="#0b0c0d" stroke="#555451" stroke-width="1.2"><path d="M40 52 108 76v196l-68 51Z"/><path d="m134 86 34 12v128l-34 26Z"/><path d="m322 98 29-11v165l-29-24Z"/><path d="m374 77 64-24v270l-64-51Z"/></g>
+<path d="M47 60v251m94-218v146m187-138v125m53-142v192" stroke="#96958b" opacity=".12"/><path d="M0 117 195 146m90 0 195-29M0 297l195-95m90 0 195 95M195 87v123m90-123v123" stroke="#98978d" opacity=".23"/>
+<path d="M174 40h132l-31 10h-70Z" fill="#76786d" opacity=".4"/><path d="m207 65 67 0-14 6h-40Z" fill="#a1a597" opacity=".7"/><path d="m226 87 31 0-6 4h-18Z" fill="#62675f"/>
+<g stroke="#9e9f95" opacity=".16"><path d="M49 322h382M110 276h262M162 238h162M209 210 130 360m117-150 55 150"/><path d="M27 0 40 47m78 0 6 24m279-30-7 71m-8 133 2 11"/></g>
+<path d="M133 275q24-11 47-5t33 13q-3 11-30 7t-50-2q-17-6 0-13Z" fill="#4b2726" opacity=".75"/>
+<path d="m317 245-17 35h39Z" fill="#bdb8a1" stroke="#151413"/><text x="319" y="272" fill="#27201d" text-anchor="middle" font-family="monospace" font-size="15" font-weight="bold">1</text>
+<path fill="url(#v)" d="M0 0h480v360H0z"/><path fill="url(#scan)" d="M0 0h480v360H0z"/>
+<path d="M19 19v18m0-18h18m424 0h-18m18 0v18M19 341v-18m0 18h18m424 0h-18m18 0v-18" fill="none" stroke="#9f9b90" opacity=".7"/>
+<text x="29" y="44" fill="#b9b4a6" font-family="monospace" font-size="10" letter-spacing="1">EVIDENCE / KB-13</text><text x="451" y="331" fill="#bfb7a7" text-anchor="end" font-family="monospace" font-size="9" letter-spacing="1.5">UNCLASSIFIED COPY</text>
+</g></svg>
