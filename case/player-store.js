@@ -29,6 +29,7 @@ export function createPlayerStore({db,fs,uid}){
  function view(x){
   const now=Date.now(),base={config:x.c,attemptsLeft:3-x.attempts.length,serverTime:now};
   if(x.p?.status==='confirmed')return{...base,state:'receipt',receipt:x.p.receipt,erased:x.p.erased};
+  if(x.p?.status==='declined')return{...base,state:'declined'};
   if(x.p?.status==='held'&&ms(x.p.heldAt)+HOLD_MS>now)return{...base,state:'claim',expires:ms(x.p.heldAt)+HOLD_MS};
   if(!x.c)return{...base,state:'paused',config:{mode:'paused',organizer:'전시 운영팀',contact:'현장 운영자',purpose:'경품 배송 및 수령 안내',retentionDays:30,version:''},setupPending:true};
   if(x.availability?.closed||x.c.mode==='closed')return{...base,state:'closed'};
@@ -38,7 +39,7 @@ export function createPlayerStore({db,fs,uid}){
  }
  async function reserve(x=undefined){
   x??=await context();const winning=x.attempts.find(a=>a.correct),current=view(x);
-  if(!winning||['receipt','claim','closed','paused'].includes(current.state))return current;
+  if(!winning||['receipt','declined','claim','closed','paused'].includes(current.state))return current;
   const id=who();
   for(const slot of ['1','2','3']){
    const holdId=uuid(),batch=fs.writeBatch(db),p={slot,holdId,attemptId:winning.id,heldAt:stamp(),receipt:uuid().replaceAll('-','').slice(0,8).toUpperCase(),status:'held',confirmedAt:null,retentionDays:0,phoneHash:'',shippedAt:null,erased:false,erasedAt:null};
@@ -51,7 +52,7 @@ export function createPlayerStore({db,fs,uid}){
  }
  async function state(){const x=await context();if(!x.p&&x.attempts.some(a=>a.correct))return reserve(x);return view(x);}
  async function attemptCode(body){
-  const code=String(body.code||'').trim().toUpperCase();if(!/^[A-Z0-9]{3}$/.test(code))fail('영문·숫자 세 자리를 입력해 주세요.');
+  const code=String(body.code||'').trim().toUpperCase();if(!/^[A-Z0-9]{3}$/.test(code))fail('코드 세 자리를 확인해 주세요.');
   if(!/^[a-f0-9-]{36}$/.test(body.requestId||''))fail('다시 제출해 주세요.');
   const x=await context(),old=x.attempts.find(a=>a.requestId===body.requestId);
   if(old){const result=old.correct?await reserve(x):view(x);return{...result,outcome:old.correct?'success':'failure'};}
@@ -64,12 +65,12 @@ export function createPlayerStore({db,fs,uid}){
   return{...(a.correct?await reserve(fresh):view(fresh)),outcome:a.correct?'success':'failure'};
  }
  async function claim(body){
-  const x=await context();if(x.p?.status==='confirmed')return view(x);
+  const x=await context();if(['confirmed','declined'].includes(x.p?.status))return view(x);
   if(view(x).state!=='claim')fail('접수 시간이 지났습니다. 다시 확인해 주세요.','EXPIRED');
   if(body.version!==x.c.version)fail('개인정보 안내가 변경되었습니다. 다시 확인하고 동의해 주세요.','POLICY_CHANGED');
   if(body.consent!==true)fail('개인정보 수집·이용 동의가 필요합니다.');
   const personal={name:String(body.name||'').trim(),phone:normalizePhone(body.phone),postal:String(body.postal||'').trim(),address:String(body.address||'').trim(),detail:String(body.detail||'').trim()};
-  if(personal.name.length<2||personal.name.length>60||!/^0\d{8,14}$/.test(personal.phone)||!/^\d{5}$/.test(personal.postal)||personal.address.length<5||personal.address.length>240||personal.detail.length>160)fail('이름·연락처·우편번호·주소를 확인해 주세요.');
+  if(personal.name.length<2||personal.name.length>60||!/^0\d{8,14}$/.test(personal.phone)||(personal.postal!==''&&!/^\d{5}$/.test(personal.postal))||personal.address.length<5||personal.address.length>240||personal.detail.length>160)fail('이름·연락처·주소를 확인해 주세요.');
   const id=who(),phoneHash=await phoneDigest(personal.phone),c=x.c;
   const consent={agreed:true,agreedAt:stamp(),version:c.version,organizer:c.organizer,contact:c.contact,purpose:c.purpose,retentionDays:c.retentionDays,extraNotice:c.extraNotice};
   // Slot contents are private. Rules select the correct closed flag atomically.
@@ -82,11 +83,25 @@ export function createPlayerStore({db,fs,uid}){
    b.set(ref('kb13Public','availability'),{closed});
    try{await b.commit();return state();}catch(e){if(!denied(e))throw e;}
   }
-  const next=await context();if(next.p?.status==='confirmed')return view(next);
+  const next=await context();if(['confirmed','declined'].includes(next.p?.status))return view(next);
   if(next.c.version!==body.version)fail('개인정보 안내가 변경되었습니다. 다시 확인하고 동의해 주세요.','POLICY_CHANGED');
   if(view(next).state!=='claim')fail('접수 시간이 지났습니다. 다시 확인해 주세요.','EXPIRED');
   fail('이미 접수한 연락처인지, 입력 내용이 올바른지 확인해 주세요. 계속 실패하면 현장 운영자에게 문의해 주세요.','CLAIM_REJECTED');
  }
- function watch(handler,onError=()=>{}){let timer;const notify=()=>{clearTimeout(timer);timer=setTimeout(handler,150);};const stops=['config','availability'].map(id=>fs.onSnapshot(ref('kb13Public',id),notify,onError));return()=>{clearTimeout(timer);stops.forEach(stop=>stop());};}
- return{state,attempt:attemptCode,reserve,claim,watch};
+ async function decline(){
+  // Keep the finished state and immutable attempts; never reset the three chances.
+  const x=await context();if(x.p?.status!=='held')return view(x);
+  const id=who();
+  for(const releaseSlot of [true,false]){
+   const b=fs.writeBatch(db);
+   b.update(ref('kb13Players',id),{status:'declined'});
+   if(releaseSlot)b.set(ref('kb13Slots',x.p.slot),{owner:'',holdId:'',attemptId:'',heldAt:null,status:'free'});
+   // The second path only succeeds when an expired slot is no longer this hold.
+   try{await b.commit();return state();}catch(e){if(!denied(e))throw e;}
+  }
+  const next=await context();if(next.p?.status!=='held')return view(next);
+  fail('수령 선택을 저장하지 못했습니다. 잠시 후 다시 눌러 주세요.','DECLINE_REJECTED');
+ }
+ function watch(handler,onError=()=>{}){let timer;const notify=()=>{clearTimeout(timer);timer=setTimeout(handler,150);};const stops=[...['config','availability'].map(id=>ref('kb13Public',id)),ref('kb13Players',who())].map(path=>fs.onSnapshot(path,notify,onError));return()=>{clearTimeout(timer);stops.forEach(stop=>stop());};}
+ return{state,attempt:attemptCode,reserve,claim,decline,watch};
 }

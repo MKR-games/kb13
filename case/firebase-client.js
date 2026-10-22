@@ -1,4 +1,4 @@
-import {createPlayerStore} from './player-store.js';
+import {createPlayerStore} from './player-store.js?v=20261022-2';
 const VERSION='13.0.0';let connection;
 export const isConfigured=()=>!!(window.KB13_FIREBASE_CONFIG?.apiKey&&window.KB13_FIREBASE_CONFIG?.projectId&&window.KB13_FIREBASE_CONFIG?.appId);
 export async function connect(){
@@ -11,7 +11,7 @@ export async function connect(){
   if(!auth.currentUser)await authSDK.signInAnonymously(auth);
   const db=fs.initializeFirestore(app,{localCache:fs.memoryLocalCache()}),store=createPlayerStore({db,fs,uid:()=>auth.currentUser?.uid});
   return{watch:store.watch,call:async({op,...body})=>{
-   try{if(!['state','attempt','reserve','claim'].includes(op))throw new Error('지원하지 않는 요청입니다.');return await(op==='state'||op==='reserve'?store[op]():store[op](body));}
+   try{if(!['state','attempt','reserve','claim','decline'].includes(op))throw new Error('지원하지 않는 요청입니다.');return await(op==='state'||op==='reserve'?store[op]():store[op](body));}
    catch(e){if(e.code==='permission-denied')e.message='접수 권한이나 운영 상태가 변경되었습니다. 다시 확인해 주세요.';if(['resource-exhausted','unavailable'].includes(e.code))e.message='현재 기록실에 연결할 수 없습니다. 잠시 후 다시 시도해 주세요.';throw e;}
   }};
  })();try{return await connection;}catch(e){connection=null;throw e;}
